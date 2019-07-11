@@ -37,4 +37,9 @@ export class AuthService {
     const token = localStorage.getItem('token');
     return this.jwtHelper.decodeToken(token).unique_name;
   }
+
+  getUserId(): string {
+    const token = localStorage.getItem('token');
+    return this.jwtHelper.decodeToken(token).nameid;
+  }
 }
