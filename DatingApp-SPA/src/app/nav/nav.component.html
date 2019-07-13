@@ -14,10 +14,13 @@
       </li>
     </ul>
     <div dropdown *ngIf="loggedIn" class="dropdown">
+      <span class="mr-1">
+        <img src="{{photoUrl}}" alt="...">
+      </span>
       <a class="dropdown-toggle text-light" dropdownToggle (click)="(false)">
         Welcome {{ username | titlecase }}
       </a>
-      <div *dropdownMenu class="dropdown-menu mt-3">
+      <div *dropdownMenu class="dropdown-menu mt-2">
         <a class="dropdown-item" [routerLink]="['/member/edit']"
           ><i class="fa fa-user"></i> Edit Profile</a
         >

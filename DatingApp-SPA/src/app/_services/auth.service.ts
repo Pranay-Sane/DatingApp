@@ -1,8 +1,10 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import { BehaviorSubject } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { JwtHelperService } from '@auth0/angular-jwt';
 import { environment } from '../../environments/environment';
+import { User } from '../_models/user';
 
 @Injectable({
   providedIn: 'root'
@@ -10,8 +12,14 @@ import { environment } from '../../environments/environment';
 export class AuthService {
   baseUrl = environment.apiUrl + 'auth/';
   jwtHelper = new JwtHelperService();
+  photoUrl = new BehaviorSubject<string>('../../assets/user.png');
+  currentPhotoUrl = this.photoUrl.asObservable();
 
   constructor(private http: HttpClient) {}
+
+  changeMemberPhoto(photoUrl: string) {
+    this.photoUrl.next(photoUrl);
+  }
 
   login(model: any) {
     return this.http.post(this.baseUrl + 'login', model).pipe(
@@ -19,6 +27,9 @@ export class AuthService {
         const user = response;
         if (user) {
           localStorage.setItem('token', user.token);
+          const currentUser: User = user.user;
+          localStorage.setItem('user', JSON.stringify(currentUser));
+          this.changeMemberPhoto(currentUser.photoUrl);
         }
       })
     );
@@ -41,5 +52,16 @@ export class AuthService {
   getUserId(): string {
     const token = localStorage.getItem('token');
     return this.jwtHelper.decodeToken(token).nameid;
+  }
+
+  getUser(): User {
+    const user: User = JSON.parse(localStorage.getItem('user'));
+    return user;
+  }
+
+  setUserPhoto(photoUrl: string) {
+    const user: User = JSON.parse(localStorage.getItem('user'));
+    user.photoUrl = photoUrl;
+    localStorage.setItem('user', JSON.stringify(user));
   }
 }

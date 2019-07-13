@@ -12,6 +12,7 @@ export class NavComponent implements OnInit {
   model: any = {};
   loggedIn = false;
   username: string;
+  photoUrl: string;
 
   constructor(
     private authService: AuthService,
@@ -24,27 +25,30 @@ export class NavComponent implements OnInit {
   }
 
   login() {
-    this.authService
-      .login(this.model)
-      .subscribe(
-        res => {
-          this.alertify.success('Logged in successfully');
-          this.setLoginStatus();
-        },
-        err => this.alertify.error(err),
-        () => this.router.navigate(['/members'])
-      );
+    this.authService.login(this.model).subscribe(
+      res => {
+        this.alertify.success('Logged in successfully');
+        this.setLoginStatus();
+      },
+      err => this.alertify.error(err),
+      () => this.router.navigate(['/members'])
+    );
   }
 
   setLoginStatus() {
     this.loggedIn = this.authService.loggedIn();
     if (this.loggedIn) {
       this.username = this.authService.getUsername();
+      // this.photoUrl = this.authService.getUser().photoUrl;
+      this.authService.currentPhotoUrl.subscribe(
+        photoUrl => (this.photoUrl = photoUrl)
+      );
     }
   }
 
   logout() {
     localStorage.removeItem('token');
+    localStorage.removeItem('user');
     this.alertify.message('logged out');
     this.setLoginStatus();
     this.router.navigate(['/home']);
