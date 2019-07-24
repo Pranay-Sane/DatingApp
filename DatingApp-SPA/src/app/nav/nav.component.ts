@@ -15,7 +15,7 @@ export class NavComponent implements OnInit {
   photoUrl: string;
 
   constructor(
-    private authService: AuthService,
+    public authService: AuthService,
     private alertify: AlertifyService,
     private router: Router
   ) {}
@@ -36,8 +36,9 @@ export class NavComponent implements OnInit {
   }
 
   setLoginStatus() {
-    this.loggedIn = this.authService.loggedIn();
-    if (this.loggedIn) {
+    // this.loggedIn = this.authService.loggedIn();
+    if (this.authService.user) {
+      this.loggedIn = true;
       this.username = this.authService.getUsername();
       // this.photoUrl = this.authService.getUser().photoUrl;
       this.authService.currentPhotoUrl.subscribe(
@@ -49,6 +50,7 @@ export class NavComponent implements OnInit {
   logout() {
     localStorage.removeItem('token');
     localStorage.removeItem('user');
+    this.authService.user = null;
     this.alertify.message('logged out');
     this.setLoginStatus();
     this.router.navigate(['/home']);

@@ -14,6 +14,7 @@ export class AuthService {
   jwtHelper = new JwtHelperService();
   photoUrl = new BehaviorSubject<string>('../../assets/user.png');
   currentPhotoUrl = this.photoUrl.asObservable();
+  user: User;
 
   constructor(private http: HttpClient) {}
 
@@ -28,6 +29,7 @@ export class AuthService {
         if (user) {
           localStorage.setItem('token', user.token);
           const currentUser: User = user.user;
+          this.user = currentUser;
           localStorage.setItem('user', JSON.stringify(currentUser));
           this.changeMemberPhoto(currentUser.photoUrl);
         }
@@ -35,8 +37,8 @@ export class AuthService {
     );
   }
 
-  register(model: any) {
-    return this.http.post(this.baseUrl + 'register', model);
+  register(user: User) {
+    return this.http.post(this.baseUrl + 'register', user);
   }
 
   loggedIn() {
@@ -60,8 +62,8 @@ export class AuthService {
   }
 
   setUserPhoto(photoUrl: string) {
-    const user: User = JSON.parse(localStorage.getItem('user'));
-    user.photoUrl = photoUrl;
-    localStorage.setItem('user', JSON.stringify(user));
+    // const user: User = JSON.parse(localStorage.getItem('user'));
+    this.user.photoUrl = photoUrl;
+    localStorage.setItem('user', JSON.stringify(this.user));
   }
 }

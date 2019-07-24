@@ -13,6 +13,7 @@ export class AppComponent implements OnInit {
   ngOnInit(): void {
     const user: User = JSON.parse(localStorage.getItem('user'));
     if (user) {
+      this.authService.user = user;
       this.authService.changeMemberPhoto(user.photoUrl);
     }
   }
